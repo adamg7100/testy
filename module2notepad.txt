@@ -82,12 +82,8 @@ End Sub
 Sub AnalyzeStockData()
     Dim ws As Worksheet
     Dim lastRow As Long
-    Dim maxIncrease As Double
-    Dim maxDecrease As Double
-    Dim maxVolume As Double
-    Dim tickermaxIncrease As String
-    Dim tickermaxDecrease As String
-    Dim tickermaxVolume As String
+    Dim maxIncrease, maxDecrease, maxVolume As Double
+    Dim tickermaxIncrease, tickermaxDecrease, tickermaxVolume As String
     
     
     For Each ws In ThisWorkbook.Worksheets
