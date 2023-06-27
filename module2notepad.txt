@@ -1,0 +1,131 @@
+Sub CalculateYearlyChange()
+   
+    Dim lastRow As Long
+    Dim openingPrice As Double
+    Dim closingPrice As Double
+    Dim yearlyChange As Double
+    Dim increaseticker, decreaseticker, volumeticker As String
+    Dim increasevalue, decreasevalue, highestvolume As Double
+    
+    For Each ws In Worksheets
+    
+    
+    ' Find the last row in the data sheet
+    lastRow = ws.Cells(ws.Rows.Count, "C").End(xlUp).Row
+    
+    ' set ticker openingprice
+    openingPrice = ws.Cells(2, "C")
+    Total = 0
+    Start = 2
+    increasevalue = 0
+    decreasevalue = 0
+    higestvolume = 0
+    
+    
+    ws.Cells(1, "I") = "Ticker"
+    ws.Cells(1, "J") = "Yearly Change"
+    ws.Cells(1, "K") = "Percentage Change"
+    ws.Cells(1, "L") = "Total Stock Volume"
+    ws.Cells(1, "P") = "Ticker"
+    ws.Cells(1, "Q") = "Value"
+    ws.Cells(2, "O") = "Greatest Percent Increase"
+    ws.Cells(3, "O") = "Greatest Percent Decrease"
+    ws.Cells(4, "O") = "Greatest Total Volume"
+    
+    ' Loop through the rows and calculate yearly change
+    For i = 2 To lastRow
+        Total = Total + ws.Cells(i, "G")
+        ticker = ws.Cells(i, "A")
+        If ws.Cells(i, "A") <> ws.Cells(i + 1, "A") Then
+        ws.Cells(Start, "I") = ticker
+        
+        ' Get the price
+    
+        
+        closingPrice = ws.Cells(i, "F").Value
+        
+        ' Calculate the yearly change
+        yearlyChange = closingPrice - openingPrice
+        ws.Cells(Start, "J") = yearlyChange
+        If ws.Cells(Start, "J") > 0 Then
+        ws.Cells(Start, "J").Interior.ColorIndex = 4
+        Else
+        ws.Cells(Start, "J").Interior.ColorIndex = 3
+        End If
+        
+     
+        
+        ' Calculate percent
+        If openingPrice <> 0 Then
+        percentagechange = yearlyChange / openingPrice
+        Else: percentagechange = 0
+        End If
+      
+        ws.Cells(Start, "K") = percentagechange
+        ws.Cells(Start, "L") = Total
+        
+       
+        
+        openingPrice = ws.Cells(i + 1, "C")
+        Total = 0
+        Start = Start + 1
+        End If
+        
+        
+        
+        
+        
+    Next i
+    Next ws
+    
+End Sub
+Sub AnalyzeStockData()
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim maxIncrease As Double
+    Dim maxDecrease As Double
+    Dim maxVolume As Double
+    Dim tickermaxIncrease As String
+    Dim tickermaxDecrease As String
+    Dim tickermaxVolume As String
+    
+    
+    For Each ws In ThisWorkbook.Worksheets
+        lastRow = ws.Cells(ws.Rows.Count, "K").End(xlUp).Row
+        
+        ' Find the greatest percentage increase and decrease
+        For i = 2 To lastRow
+            If ws.Cells(i, "K").Value > maxIncrease Then
+                maxIncrease = ws.Cells(i, "K").Value
+                tickermaxIncrease = ws.Cells(i, "I").Value
+            End If
+            
+            If ws.Cells(i, "K").Value < maxDecrease Then
+                maxDecrease = ws.Cells(i, "K").Value
+                tickermaxDecrease = ws.Cells(i, "I").Value
+            End If
+            
+            If ws.Cells(i, "L").Value > maxVolume Then
+            maxVolume = ws.Cells(i, "L").Value
+            tickermaxVolume = ws.Cells(i, "I").Value
+            End If
+            
+        Next i
+        
+        ' Output results in specified cells
+        ws.Range("P2").Value = tickermaxIncrease
+        ws.Range("P3").Value = tickermaxDecrease
+        ws.Range("P4").Value = tickermaxVolume
+        ws.Range("Q2").Value = maxIncrease
+        ws.Range("Q3").Value = maxDecrease
+        ws.Range("Q4").Value = maxVolume
+        ' clear variables (unsure if necessary or not, but the greatest increase/decrease did not change between 2019 and 2020 when not cleared)
+        maxIncrease = 0
+        maxDecrease = 0
+        maxVolume = 0
+        tickermaxIncrease = ""
+        tickermaxDecrease = ""
+        tickermaxVolume = ""
+        
+    Next ws
+End Sub
